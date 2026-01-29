@@ -11,7 +11,7 @@ export type Member = {
   country: string
 }
 
-export type Root = {
+export type Photo = {
   id: number
   url: string
   publicId?: string
