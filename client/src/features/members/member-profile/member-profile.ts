@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit, signal, ViewChild, viewChild } from '@angular/core';
+import { Component, HostListener, inject, OnDestroy, OnInit, signal, ViewChild, viewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EditableMember, Member } from '../../../types/member';
 import { DatePipe } from '@angular/common';
@@ -14,11 +14,16 @@ import { ToastService } from '../../../core/services/toast-service';
 })
 export class MemberProfile implements OnInit, OnDestroy {
   @ViewChild('editForm') editForm?: NgForm;
+  @HostListener('window:beforeunload', ['$event']) notify($event:BeforeUnloadEvent){
+    if (this.editForm?.dirty){
+      $event.preventDefault();
+    }
+  }
   protected memberService = inject(MemberService);
   private toast = inject(ToastService);
   private route = inject(ActivatedRoute);
   protected member = signal<Member | undefined>(undefined);
-  protected editableMember?: EditableMember = {
+  protected editableMember: EditableMember = {
     displayName: '',
     description: '',
     city: '',
@@ -42,8 +47,13 @@ export class MemberProfile implements OnInit, OnDestroy {
     if (!this.member()) return;
     const updatedMember = {...this.member(), ...this.editableMember};
     console.log(updatedMember);
-    this.toast.success('Profile Updated Successfully');
-    this.memberService.editMode.set(false);
+     this.memberService.updateMember(this.editableMember).subscribe({
+       next: () => {
+        this.toast.success('Profile Updated Successfully');
+        this.memberService.editMode.set(false);
+        this.editForm?.reset(updatedMember);
+       }
+    });    
   }
 
   ngOnDestroy(): void {

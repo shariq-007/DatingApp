@@ -13,22 +13,22 @@
     <form #editForm="ngForm" (ngSubmit)="updateProfile()" class="flex flex-col w-full gap-4">
         <label class="floating-label">
             <span>Display Name</span>
-            <input class="input w-full"  name="displayName" [(ngModal)]="editableMember.displayName" 
-            placeholder="Display name">
+            <input class="input w-full"  name="displayName" [(ngModel)]="editableMember.displayName" 
+            placeholder="Display Name">
         </label>
         <label class="floating-label">
-            <span>Display Name</span>
-            <textarea class="textarea w-full"  name="description" [(ngModal)]="editableMember.description" 
+            <span>Description</span>
+            <textarea class="textarea w-full"  name="description" [(ngModel)]="editableMember.description" 
             placeholder="Description"></textarea>
         </label>
         <label class="floating-label">
             <span>City</span>
-            <input class="input w-full"  name="displayName" [(ngModal)]="editableMember.city" 
+            <input class="input w-full"  name="city" [(ngModel)]="editableMember.city" 
             placeholder="City">
         </label>
         <label class="floating-label">
             <span>Country</span>
-            <input class="input w-full"  name="displayName" [(ngModal)]="editableMember.country" 
+            <input class="input w-full"  name="country" [(ngModel)]="editableMember.country" 
             placeholder="Country">
         </label>
         <div class="self-end">
@@ -39,6 +39,5 @@
     @else {
     <div>{{member.description}}</div>
     }
-
 </div>
 }
