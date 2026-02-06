@@ -46,7 +46,6 @@ export class MemberProfile implements OnInit, OnDestroy {
   updateProfile(){
     if (!this.member()) return;
     const updatedMember = {...this.member(), ...this.editableMember};
-    console.log(updatedMember);
      this.memberService.updateMember(this.editableMember).subscribe({
        next: () => {
         this.toast.success('Profile Updated Successfully');
