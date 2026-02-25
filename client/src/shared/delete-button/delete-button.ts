@@ -10,8 +10,11 @@ export class DeleteButton {
   disabled = input<boolean>();
   clickEvent = output<Event>();
 
-  onClick(event: Event){
-    this.clickEvent.emit(event);
-  }
+  onClick(event: Event) {
+    const confirmed = confirm('Are you sure you want to delete the selected photo?');
 
+    if (confirmed) {
+      this.clickEvent.emit(event);
+    }
+  }
 }

@@ -48,6 +48,15 @@ export class ImageUpload {
     }
   }
 
+   onFileSelected(event: Event){
+    const input = event.target as HTMLInputElement | null;
+    if (input?.files && input.files.length) {
+      const file = input.files[0];
+      this.previewImg(file);
+      this.fileToUpload = file;
+    }
+  }
+
   private previewImg(file: File){
     const reader = new FileReader();
     reader.onload = (e) => this.imgSrc.set(e.target?.result);
