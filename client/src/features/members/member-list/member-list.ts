@@ -78,7 +78,7 @@ export class MemberList implements OnInit {
     }
 
     if (this.updatedParams.minAge !== defaultParams.minAge ||
-       defaultParams.maxAge !== defaultParams.maxAge){
+       this.updatedParams.maxAge !== defaultParams.maxAge){
         filters.push(` ages ${this.updatedParams.minAge}-${this.updatedParams.maxAge}`)
     }
 

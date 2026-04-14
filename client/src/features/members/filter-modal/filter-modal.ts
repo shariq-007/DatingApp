@@ -15,14 +15,15 @@ export class FilterModal {
   memberParams = model(new MemberParams());
 
   constructor() {
-    const filters = localStorage.getItem('filters');
-    if (filters){
-      this.memberParams.set(JSON.parse(filters));
-    }
+    
   }
 
 
   open() {
+    const filters = localStorage.getItem('filters');
+    if (filters){
+      this.memberParams.set(JSON.parse(filters));
+    }
     this.modalRef.nativeElement.showModal();
   }
 
