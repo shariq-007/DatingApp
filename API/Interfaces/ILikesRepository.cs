@@ -1,11 +1,12 @@
 using API.Entities;
+using API.Helpers;
 
 namespace API.Interfaces;
 
 public interface ILikesRepository
 {
     Task<MemberLike?> GetMemberLike(string SourceMemberId, string TargetMemberId);
-    Task<IReadOnlyList<Member>> GetMemberLikes(string predicate, string memberId);
+    Task<PaginatedResult<Member>> GetMemberLikes(LikesParams likesParam);
     Task<IReadOnlyList<String>> GetCurrentMemberLikeIds(string memberId);
     void DeleteLike(MemberLike like);
     void AddLike(MemberLike like);
