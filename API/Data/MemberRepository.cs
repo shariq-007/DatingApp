@@ -1,9 +1,6 @@
-using System;
-using API.DTOs;
 using API.Entities;
 using API.Helpers;
 using API.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data;

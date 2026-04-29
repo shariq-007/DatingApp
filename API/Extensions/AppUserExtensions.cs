@@ -1,4 +1,3 @@
-using System;
 using API.DTOs;
 using API.Entities;
 using API.Interfaces;
@@ -18,5 +17,4 @@ public static class AppUserExtensions
             Token=tokenServices.CreateToken(user)
         };
     }
-
 }
