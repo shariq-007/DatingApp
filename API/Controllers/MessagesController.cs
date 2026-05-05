@@ -2,6 +2,7 @@ using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,4 +34,10 @@ public class MessagesController(IMessageRepository msgRepository, IMemberReposit
         
     }
 
+    [HttpGet]
+    public async Task<ActionResult<PaginatedResult<MessageDto>>> GetMessagesByContainer([FromQuery]MessageParams msgParams)
+    {
+        msgParams.MemberId = User.GetMemberId();
+        return await msgRepository.GetMessagesForMember(msgParams);
+    }
 }
