@@ -40,4 +40,34 @@ public class MessagesController(IMessageRepository msgRepository, IMemberReposit
         msgParams.MemberId = User.GetMemberId();
         return await msgRepository.GetMessagesForMember(msgParams);
     }
+
+    [HttpGet("thread/{recipientId}")]
+    public async Task<ActionResult<IReadOnlyList<MessageDto>>> GetMessageThread(string recipientId)
+    {
+        return Ok(await msgRepository.GetMessageThread(User.GetMemberId(), recipientId));
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeleteMessage(string Id)
+    {
+        var memberId = User.GetMemberId();
+
+        var msg = await msgRepository.GetMessage(Id);
+
+        if (msg == null) return BadRequest("Cannot delete this message");
+
+        if (msg.SenderId != memberId && msg.RecipientId != memberId) return BadRequest("You cannot delete this message");
+
+        if (msg.SenderId == memberId) msg.IsSenderMsgDeleted=true;
+        if (msg.RecipientId == memberId) msg.IsRecipientMsgDeleted=true;
+
+        if (msg is {IsSenderMsgDeleted:true, IsRecipientMsgDeleted:true})
+        {
+            msgRepository.DeleteMessage(msg);
+        }
+
+        if (await msgRepository.SaveAllAsync()) return Ok();
+
+        return BadRequest("Problem while deleting the message.");
+    }
 }
