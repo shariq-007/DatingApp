@@ -12,7 +12,6 @@ export class AdminService {
 
   getUserWithRoles(){
     return this.http.get<User[]>(this.baseUrl + 'admin/users-with-roles');
-    
   }
   
 }

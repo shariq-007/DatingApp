@@ -15,7 +15,7 @@ export class Admin {
   activeTab = 'photos';
   tabs = [
     {label: 'Photo Moderation', value: 'photos'},
-    {label: 'User Management', value: 'roles'}
+    {label: 'User Management', value: 'roles'},
   ]
 
   setTab(tab: string){
