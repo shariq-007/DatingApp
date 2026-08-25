@@ -11,7 +11,7 @@ export class HasRoles implements OnInit {
   private templateRef = inject(TemplateRef);
 
   ngOnInit(): void {
-    if (this.accountService.currentUser()?.roles.some(r => this.appHasRoles.includes(r))) {
+    if (this.accountService.currentUser()?.roles?.some(r => this.appHasRoles.includes(r))) {
       this.viewContainerRef.createEmbeddedView(this.templateRef);
     }
     else {

@@ -4,7 +4,7 @@
             @for (tab of tabs; track $index) {
                 <button 
                     class="tab"
-                    hidden="tab.value === 'roles' 
+                    [hidden]="tab.value === 'roles' 
                         && !accountService.currentUser()?.roles?.includes('Admin')"
                     [class.tab-active]="activeTab === tab.value"
                     (click)="setTab(tab.value)"
