@@ -35,6 +35,10 @@ export class MessageService {
           currentUserSender: msg.senderId !== otherUserId
         })))
     });
+    this.hubConnection.on('NewMessage', (message: Message) => {
+      message.currentUserSender = message.senderId === currentUser.id;
+      this.msgThread.update(msgs => [...msgs, message])
+    });
   }
 
   stopHubConnection(){
@@ -58,7 +62,7 @@ export class MessageService {
   }  
 
   sendMessage(recipientId: string, content: string){
-    return this.http.post<Message>(this.baseUrl + 'messages', {recipientId, content})
+    return this.hubConnection?.invoke<Message>('SendMsg', {recipientId, content})
   }
 
   deleteMessage(id: string){

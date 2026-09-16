@@ -3,6 +3,7 @@ using API.DTOs;
 using API.Entities;
 using API.Extensions;
 using API.Interfaces;
+using CloudinaryDotNet.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Primitives;
@@ -10,7 +11,8 @@ using Microsoft.Extensions.Primitives;
 namespace API.SignalR;
 
 [Authorize]
-public class MsgHub(IMessageRepository msgRepository, IMemberRepository memberRepository) : Hub
+public class MsgHub(IMessageRepository msgRepository, IMemberRepository memberRepository,
+    IHubContext<PresenceHub> presenceHub) : Hub
 {
     public override async Task OnConnectedAsync()
     {
@@ -19,10 +21,11 @@ public class MsgHub(IMessageRepository msgRepository, IMemberRepository memberRe
             ?? throw new HubException("Other User Not Found");
         var grpName = GetGroupName(GetUserId(), otherUser);
         await Groups.AddToGroupAsync(Context.ConnectionId, grpName);
+        await AddToGroup(grpName);
 
         var msgs = await msgRepository.GetMessageThread(GetUserId(), otherUser);
 
-        await Clients.Group(grpName).SendAsync("ReceiveMessageThread");
+        await Clients.Group(grpName).SendAsync("ReceiveMessageThread", msgs);
     }
 
     public async Task SendMsg(CreateMessageDto createMsgDto)
@@ -40,18 +43,51 @@ public class MsgHub(IMessageRepository msgRepository, IMemberRepository memberRe
             Content = createMsgDto.Content
         };
 
+        var grpName = GetGroupName(sender.Id, recipient.Id);
+        var group = await msgRepository.GetMsgGrp(grpName);
+        var userInGroup = group != null && group.Connections.Any(x => x.UserId == msg.RecipientId);
+
+        if (userInGroup)
+        {
+            msg.MsgReadOn = DateTime.UtcNow;
+        }
+
         msgRepository.AddMessage(msg);
 
         if (await msgRepository.SaveAllAsync())
         {
-            var grp = GetGroupName(sender.Id, recipient.Id);
-            await Clients.Group(grp).SendAsync("NewMessage", msg.ToDto());
+            await Clients.Group(grpName).SendAsync("NewMessage", msg.ToDto());
+            var connections = await PresenceTracker.GetConnectionForUsers(recipient.Id);
+
+            if (connections != null && connections.Count > 0 && !userInGroup)
+            {
+                await presenceHub.Clients.Clients(connections)
+                    .SendAsync("NewMessageReceived", msg.ToDto());
+            }
         }
     }
 
-    public override Task OnDisconnectedAsync(Exception? exception)
+    public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        return base.OnDisconnectedAsync(exception);
+        await msgRepository.RemoveConnection(Context.ConnectionId);
+        await base.OnDisconnectedAsync(exception);
+    }
+
+    private async Task<bool> AddToGroup(string grpName)
+    {
+        var grp = await msgRepository.GetMsgGrp(grpName);
+        var conn = new Connection(Context.ConnectionId, GetUserId());
+
+        if (grp == null)
+        {
+            grp = new Group(grpName);
+            msgRepository.AddGroup(grp);
+        }
+
+        grp.Connections.Add(conn);
+
+        return await msgRepository.SaveAllAsync();
+        
     }
 
     private static string GetGroupName(string? caller, string? other)

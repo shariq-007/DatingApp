@@ -43,7 +43,7 @@
             <div class="h-12 w-12">
               <img 
                 class="rounded-full"
-                src="{{isInbox ? msg.senderImgUrl : msg.recipientImgUrl}}"
+                src="{{isInbox ? msg.senderImgUrl || '/user.png' : msg.recipientImgUrl || '/user.png'}}"
                 alt="Image of Member">
             </div>
             <div>
