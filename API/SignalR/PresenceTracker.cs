@@ -28,7 +28,7 @@ public class PresenceTracker
 
         return Task.CompletedTask;
     }
-
+    
     public Task<string[]> GetOnlineUsers()
     {
         return Task.FromResult(OnlineUsers.Keys.OrderBy(k => k).ToArray());
@@ -43,5 +43,4 @@ public class PresenceTracker
 
         return Task.FromResult(new List<string>());
     }
-
 }

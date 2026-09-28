@@ -11,7 +11,7 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
 {
     public void AddGroup(Group group)
     {
-        throw new NotImplementedException();
+        context.Groups.Add(group);
     }
 
     public void AddMessage(Message msg)
