@@ -49,9 +49,11 @@ export class Nav implements OnInit {
           this.router.navigateByUrl('/members');
           this.toast.success('Logged In Successfully');
           this.creds={};
+          this.loading.set(false);
         },
         error: error => {
           this.toast.error(error.error);
+          this.loading.set(false);
         },
         complete: () => this.loading.set(false)
       }

@@ -59,9 +59,4 @@ public class LikesRepository(AppDbContext context) : ILikesRepository
         
         return await PaginationHelper.CreateAsync(result, likesParam.PageNumber, likesParam.PageSize);
     }
-
-    public async Task<bool> SaveAllChanges()
-    {
-        return await context.SaveChangesAsync() > 0;
-    }
 }
