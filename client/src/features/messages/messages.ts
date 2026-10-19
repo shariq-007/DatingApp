@@ -5,6 +5,7 @@ import { Message } from '../../types/message';
 import { Paginator } from "../../shared/paginator/paginator";
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { ConfirmDialogService } from '../../core/services/confirm-dialog-service';
 
 @Component({
   selector: 'app-messages',
@@ -14,6 +15,7 @@ import { DatePipe } from '@angular/common';
 })
 export class Messages implements OnInit {
   private msgService = inject(MessageService);
+  private confirmDialog = inject(ConfirmDialogService);
   protected container = 'Inbox';
   protected fetchedContainer = 'Inbox';
   protected pageNumber = 1;
@@ -38,15 +40,41 @@ export class Messages implements OnInit {
     })
   }
 
-  delMsg(event: Event, id: string){
-    event.stopPropagation();
+  // delMsg(event: Event, id: string){
+  //   event.stopPropagation();
 
-    const confirmed = confirm('Are you sure you want to delete this message?');
+  //   const confirmed = confirm('Are you sure you want to delete this message?');
 
-    if (!confirmed) {
-      return;
-    }
+  //   if (!confirmed) {
+  //     return;
+  //   }
     
+  //   this.msgService.deleteMessage(id).subscribe({
+  //     next: () => {
+  //       const current = this.paginatedMsgs();
+  //       if (current?.items){
+  //         this.paginatedMsgs.update(prev => {
+  //           if (!prev) return null;
+
+  //           const newItems = prev.items.filter(m => m.id != id) || [];
+
+  //           return {
+  //             items: newItems,
+  //             metadata: prev.metadata
+  //           }
+  //         })
+  //       }
+  //     }
+  //   })
+  // }
+
+  async confirmDelete(event: Event, id: string){
+    event.stopPropagation();
+    const ok  = await this.confirmDialog.confirm('Are you sure you want to delete this message?');
+    if (ok) this.delMsg(id);
+  }
+
+  delMsg(id: string){
     this.msgService.deleteMessage(id).subscribe({
       next: () => {
         const current = this.paginatedMsgs();

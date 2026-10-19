@@ -101,8 +101,7 @@ public class AccountController(UserManager<AppUser> userManager, ITokenServices 
             Expires = DateTime.UtcNow.AddDays(7)
         };
 
-        //Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
-        Response.Cookies.Delete("refreshToken");
+        Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
     }
 
 
@@ -117,7 +116,7 @@ public class AccountController(UserManager<AppUser> userManager, ITokenServices 
                 .SetProperty(u => u.RefreshTokenExpiry, _=> null)
                 );
 
-        Response.Cookies.Delete("refreshtoken");
+        Response.Cookies.Delete("refreshToken");
         return Ok();
     }
 }
